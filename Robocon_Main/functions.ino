@@ -190,10 +190,6 @@ void motor(int motorNum, float rpm) {
       Wire.beginTransmission(Lecate_I2C_ADDRESS);
       Wire.write(LeftLecatePin);
       pwm = rpm;
-      //PID_encoder4.Setpoint(rpm);
-      // pwm = RPMToPWM(PID_encoder4.Run(rpm4));
-      //pwm = -PID_encoder4.Run(rpm4);
-      // pwm = RPMToPWM(rpm);
       // Set motor speed on the motor driver
       Serial.print("5:");
       Serial.print(pwm);
@@ -204,11 +200,7 @@ void motor(int motorNum, float rpm) {
       Wire.beginTransmission(Lecate_I2C_ADDRESS);
       Wire.write(RightLecatePin);
       pwm = rpm;
-      //PID_encoder4.Setpoint(rpm);
-      // pwm = RPMToPWM(PID_encoder4.Run(rpm4));
-      //pwm = -PID_encoder4.Run(rpm4);
-      // pwm = RPMToPWM(rpm);
-      // Set motor speed on the motor driver
+      
       Serial.print("6:");
       Serial.print(pwm);
       Serial.println(' ');
@@ -218,11 +210,7 @@ void motor(int motorNum, float rpm) {
       Wire.beginTransmission(Gripper_I2C_ADDRESS);
       Wire.write(LeftGripperPin);
       pwm = rpm;
-      //PID_encoder4.Setpoint(rpm);
-      // pwm = RPMToPWM(PID_encoder4.Run(rpm4));
-      //pwm = -PID_encoder4.Run(rpm4);
-      // pwm = RPMToPWM(rpm);
-      // Set motor speed on the motor driver
+
       Serial.print("7:");
       Serial.print(pwm);
       Serial.println(' ');
@@ -232,11 +220,6 @@ void motor(int motorNum, float rpm) {
       Wire.beginTransmission(Gripper_I2C_ADDRESS);
       Wire.write(RightGripperPin);
       pwm = rpm;
-      //PID_encoder4.Setpoint(rpm);
-      // pwm = RPMToPWM(PID_encoder4.Run(rpm4));
-      //pwm = -PID_encoder4.Run(rpm4);
-      // pwm = RPMToPWM(rpm);
-      // Set motor speed on the motor driver
       Serial.print("8:");
       Serial.print(pwm);
       Serial.println(' ');

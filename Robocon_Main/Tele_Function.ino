@@ -1,8 +1,3 @@
-
-
-// highest height that telescope can go
-
-
 void TeleUp( int pwmSpeed )
 {
   //up
@@ -22,16 +17,6 @@ void TeleUp( int pwmSpeed , int time )
   TeleStop( );
 }
 
-
-// 
-void TeleDown( int pwmSpeed )
-{
-  isTeleStall = false;
-  digitalWrite( TelePinA , LOW );
-  digitalWrite( TelePinB , HIGH );
-  analogWrite( TelePWM , pwmSpeed );
-}
-
 void TeleAutoDown( )
 {
     if( teleEncoder.getCount() < 2000 )
@@ -41,8 +26,7 @@ void TeleAutoDown( )
       isAutoUp = false;
       isAutoDown = false;
       peakStall = 0;
-      TeleUp ( 0 );
-      //TeleStop();
+      TeleStop();
       Serial.println("----- End Auto Down -----");
     }
     // if( canLowerPeak )
@@ -107,7 +91,7 @@ void TeleAutoUp()
 }
 
 const int Stall_bypass = 800;
-int i = 0;
+int downPwm = 50;
 
 void TeleStall(  )
 {
@@ -124,7 +108,14 @@ void TeleStall(  )
  
   if( isAutoDown )
   {
-    TeleUp( 30 );
+    if( ( millis() - last_operation ) > 100 )
+    {
+      long count_diff = prev_count - teleEncoder.getCount();
+      downPwm = map( count_diff , 0 , 1000 , 20 , 50);
+      count_diff = teleEncoder.getCount();
+      last_operation = millis();
+    }
+    TeleUp( downPwm );
     Serial.println(" deceaseing ");
   }
   else
