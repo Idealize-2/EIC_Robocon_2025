@@ -31,8 +31,8 @@ bool Xpressed = false;
 /*----------/Telescopic------------*/
 // int IN1A = 17;
 // int IN2A = 16;
-// #define Telescopic_I2C_ADDRESS 0x51
-// #define LeftTelescopicPin 0x85
+#define FEEDER_I2C_ADDRESS 0x51
+#define FeederPin 0x85
 // #define RightTelescopicPin 0x86
 #define TelePinA 18
 #define TelePinB 19
@@ -44,6 +44,10 @@ bool isAutoDown = false;
 
 bool lecateDelay = false; // use for is Auto Down
 long peakStall;
+
+//saddwadaw
+bool isAutoAim = false;
+
 
 //Telescope encoder
 ESP32Encoder teleEncoder ;
@@ -122,6 +126,8 @@ void setup() {
   initializeController();
   resetEncoders();
 
+	Serial.setTimeout(1);
+
   pinMode(TelePinA, OUTPUT);
   pinMode(TelePinB, OUTPUT);
   pinMode(TelePWM, OUTPUT);
@@ -148,7 +154,7 @@ void loop() {
     processControllers();
   }
 
-  // Serial.println( teleEncoder.getCount() );
+  //Serial.println( teleEncoder.getCount() );
   // TeleUp(200,500);
 
 
@@ -172,7 +178,24 @@ void loop() {
 
   // --------------------------------------------- //
 
-  // x = Serial.readString().toInt();
+  //Serial.println( x );
+  if( isAutoAim )
+  {
+    while( isAutoAim )
+    {
+      if( Serial.available() )
+      {
+        x = Serial.readString().toInt();
+        BFver( x );
+        Serial.println( x );
+
+      }
+    }
+  }
+  
+  
+  
+    //BFver( x );
   // int xmap = map(abs(x),0,640,0,245);
   // if(x > 10)
   // {

@@ -128,11 +128,12 @@ void motor(int motorNum, float rpm) {
       pwm = rpm;
       // pwm = RPMToPWM(rpm);
       // Set motor speed on the motor driver
-      Serial.print("1:");
-      Serial.print(rpm1);
-      Serial.print(" ");
-      Serial.print(rpm);
-      Serial.print(" ");
+
+      // Serial.print("1:");
+      // Serial.print(rpm1);
+      // Serial.print(" ");
+      // Serial.print(rpm);
+      // Serial.print(" ");
       break;
 
     case 2:
@@ -145,11 +146,12 @@ void motor(int motorNum, float rpm) {
       pwm = rpm;
       // pwm = RPMToPWM(rpm);
       // Set motor speed on the motor driver
-      Serial.print("2:");
-      Serial.print(rpm2);
-      Serial.print(" ");
-      Serial.print(rpm);
-      Serial.print(" ");
+
+      // Serial.print("2:");
+      // Serial.print(rpm2);
+      // Serial.print(" ");
+      // Serial.print(rpm);
+      // Serial.print(" ");
       break;
 
     case 3:
@@ -162,11 +164,12 @@ void motor(int motorNum, float rpm) {
       pwm = rpm;
       // pwm = RPMToPWM(rpm);
       // Set motor speed on the motor driver
-      Serial.print("3:");
-      Serial.print(rpm3);
-      Serial.print(" ");
-      Serial.print(rpm);
-      Serial.print(" ");
+
+      // Serial.print("3:");
+      // Serial.print(rpm3);
+      // Serial.print(" ");
+      // Serial.print(rpm);
+      // Serial.print(" ");
       break;
 
     case 4:
@@ -179,11 +182,11 @@ void motor(int motorNum, float rpm) {
       pwm = rpm;
       // pwm = RPMToPWM(rpm);
       // Set motor speed on the motor driver
-      Serial.print("4:");
-      Serial.print(rpm4);
-      Serial.print(" ");
-      Serial.print(rpm);
-      Serial.println(" ");
+      // Serial.print("4:");
+      // Serial.print(rpm4);
+      // Serial.print(" ");
+      // Serial.print(rpm);
+      // Serial.println(" ");
       break;
 
     case 5:
@@ -225,19 +228,19 @@ void motor(int motorNum, float rpm) {
       Serial.println(' ');
       break;
 
-    // case 9:
-    //   Wire.beginTransmission(Telescopic_I2C_ADDRESS);
-    //   Wire.write(LeftTelescopicPin);
-    //   pwm = rpm;
-    //   //PID_encoder4.Setpoint(rpm);
-    //   // pwm = RPMToPWM(PID_encoder4.Run(rpm4));
-    //   //pwm = -PID_encoder4.Run(rpm4);
-    //   // pwm = RPMToPWM(rpm);
-    //   // Set motor speed on the motor driver
-    //   Serial.print("9:");
-    //   Serial.print(pwm);
-    //   Serial.println(' ');
-    //   break;
+    case 9:
+      Wire.beginTransmission( FEEDER_I2C_ADDRESS );
+      Wire.write( FeederPin );
+      pwm = rpm;
+      //PID_encoder4.Setpoint(rpm);
+      // pwm = RPMToPWM(PID_encoder4.Run(rpm4));
+      //pwm = -PID_encoder4.Run(rpm4);
+      // pwm = RPMToPWM(rpm);
+      // Set motor speed on the motor driver
+      Serial.print("9:");
+      Serial.print(pwm);
+      Serial.println(' ');
+      break;
 
     // case 10:
     //   Wire.beginTransmission(Telescopic_I2C_ADDRESS);
@@ -348,7 +351,7 @@ void onDisconnectedController(ControllerPtr ctl) {
 void processControllers() {
   for (auto myController : myControllers) {
     if (myController && myController->isConnected() && myController->hasData()) {
-      //Serial.printf("has data");
+      //Serial.println("has data");
       if (myController->isGamepad()) {
         x_ctrl = mapf(myController->axisX(), -511, 512, -1, 1);
         y_ctrl = mapf(myController->axisY(), -511, 512, -1, 1);
@@ -381,54 +384,64 @@ void processControllers() {
       //   delay(500);
       // }]
       if (myController->x()) {
-        motor(8, 250);
-        delay(2000);
-        motor(8, 0);
-        delay(2000);
+        // Serial.println("X pressd");
+        // motor(9,-250);
+        // delay(800);
+        // motor(9,50);
+        // delay(100);
+        // motor(9,0);
       }
 
-      if (myController->a()) {
-        motor(7, 180);
-        motor(8, -180);
-        delay(1200);
-
-        double prevt = millis();
-        double currentt = millis();
-        while (currentt - prevt < 13500) {
-          motor(7, 180);
-          motor(8, -180);
-          // motor(9, 225);
-          // motor(10, 225);
-          currentt = millis();
-        }
-        delay(1000);
-
-        motor(7, -100);
-        motor(8, 100);
-        delay(50);
-
-        motor(5, 255);
-        motor(6, 255);
-
-
-
-        prevt = millis();
-        currentt = millis();
-        while (currentt - prevt < 1000) {
-          motor(1, 120);
-          motor(2, 120);
-          motor(3, 120);
-          motor(4, 120);
-          currentt = millis();
-        }
-        motor(1, 0);
-        motor(2, 0);
-        motor(3, 0);
-        motor(4, 0);
-        delay(1200);
-        motor(7, 0);
-        motor(8, 0);
+      if ( myController->a() )
+      {
+        Serial.println("A pressd");
+        motor(9,50);
+        delay(100);
+        motor(9,0);
       }
+
+      // if (myController->a()) {
+      //   motor(7, 180);
+      //   motor(8, -180);
+      //   delay(1200);
+
+      //   double prevt = millis();
+      //   double currentt = millis();
+      //   while (currentt - prevt < 13500) {
+      //     motor(7, 180);
+      //     motor(8, -180);
+      //     // motor(9, 225);
+      //     // motor(10, 225);
+      //     currentt = millis();
+      //   }
+      //   delay(1000);
+
+      //   motor(7, -100);
+      //   motor(8, 100);
+      //   delay(50);
+
+      //   motor(5, 255);
+      //   motor(6, 255);
+
+
+
+      //   prevt = millis();
+      //   currentt = millis();
+      //   while (currentt - prevt < 1000) {
+      //     motor(1, 120);
+      //     motor(2, 120);
+      //     motor(3, 120);
+      //     motor(4, 120);
+      //     currentt = millis();
+      //   }
+      //   motor(1, 0);
+      //   motor(2, 0);
+      //   motor(3, 0);
+      //   motor(4, 0);
+      //   delay(1200);
+      //   motor(7, 0);
+      //   motor(8, 0);
+      // }
       //TeleAutoUp
       if( myController->b() )
       {
@@ -463,6 +476,23 @@ void processControllers() {
 
         }
 
+      }
+      if ( myController->r1() )
+      {
+        // Serial.println("X pressd");
+        motor(9,-250);
+        delay(800);
+        motor(9,50);
+        delay(100);
+        motor(9,0); 
+      }
+      if( myController->r2() )
+      {
+        Serial.println("------------OK------------------");
+        if ( !isAutoAim )
+        {
+          isAutoAim = true;
+        } 
       }
     }
   }

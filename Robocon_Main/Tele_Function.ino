@@ -115,7 +115,7 @@ void TeleStall(  )
       count_diff = teleEncoder.getCount();
       last_operation = millis();
     }
-    TeleUp( downPwm );
+    TeleUp( 30 );
     Serial.println(" deceaseing ");
   }
   else
