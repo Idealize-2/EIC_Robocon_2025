@@ -75,8 +75,8 @@ void TeleAutoUp()
     if ( millis() - last_operation > DECIDE_PEAK ) 
     {
       Serial.println("END---------------------------------------------");
-      peakStall = teleEncoder.getCount()-2000;
-      TeleUp( 30 );
+      peakStall = teleEncoder.getCount()-1500;
+      TeleUp( 0 );
       isTeleStall = true;
       isAutoUp = false;
     }
@@ -111,7 +111,7 @@ void TeleStall(  )
     if( ( millis() - last_operation ) > 100 )
     {
       long count_diff = prev_count - teleEncoder.getCount();
-      downPwm = map( count_diff , 0 , 2000 , 30 , 50);
+      downPwm = map( count_diff , 0 , 2000 , 35 , 100);
       //count_diff = teleEncoder.getCount();
       last_operation = millis();
       prev_count = teleEncoder.getCount();

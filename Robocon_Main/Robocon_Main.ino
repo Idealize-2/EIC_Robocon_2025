@@ -185,9 +185,11 @@ void loop() {
     {
       if( Serial.available() )
       {
-        x = Serial.readString().toInt();
-        BFver( x );
-        Serial.println( x );
+         x = Serial.readString().toInt();
+         String input = Serial.readStringUntil('\n');
+         x = input.toInt();
+         BFver( x );
+         Serial.println( x );
 
       }
     }
@@ -205,11 +207,4 @@ void loop() {
   // digitalWrite(INA, HIGH);
   // digitalWrite(INB, LOW);
 
-<<<<<<< HEAD
-=======
-
-
-  // motor(9, -185);
-  // motor(10, -185);
->>>>>>> parent of e60a285 (Before restructure code)
 }
