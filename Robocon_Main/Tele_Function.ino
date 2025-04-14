@@ -27,6 +27,8 @@ void TeleAutoDown( )
       isAutoDown = false;
       peakStall = 0;
       TeleStop();
+      teleEncoder.setCount( 0 );
+      teleEncoder.setFilter( 10 );
       Serial.println("----- End Auto Down -----");
     }
     // if( canLowerPeak )

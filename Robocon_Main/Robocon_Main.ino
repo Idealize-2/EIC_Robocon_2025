@@ -126,13 +126,13 @@ void setup() {
   initializeController();
   resetEncoders();
 
-	Serial.setTimeout(1);
+	//Serial.setTimeout(10);
 
   pinMode(TelePinA, OUTPUT);
   pinMode(TelePinB, OUTPUT);
   pinMode(TelePWM, OUTPUT);
 
-  //Serial.setTimeout(1);
+  Serial.setTimeout(1);
 
   // /* ---------------- TEST ---------------- */
   // Serial.println("Starting...");
@@ -185,7 +185,8 @@ void loop() {
     {
       if( Serial.available() )
       {
-        x = Serial.readString().toInt();
+        String input = Serial.readStringUntil('\n');
+        x = input.toInt();
         BFver( x );
         Serial.println( x );
 
@@ -248,4 +249,5 @@ void loop() {
 
   // motor(9, -185);
   // motor(10, -185);
+  //Serial.flush();
 }

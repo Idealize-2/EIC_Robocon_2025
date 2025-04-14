@@ -4,8 +4,8 @@
 void BFver( int x )
 {
   //Serial.println( x );
-  int xmap = map(abs(x),10,640,17,50);
-   if(x > 15)
+  int xmap = map(abs(x),15,640,17,30);
+   if(x > 10)
    {
      //Serial.print("////////////////////////////////Right/////////////////////////////////");
     //  Serial.print("left move");
@@ -19,7 +19,7 @@ void BFver( int x )
      motor(4,-xmap);
 
    }
-   else if(x < -15)
+   else if(x < -10)
    {
      //Serial.print("////////////////////////////////Left///////////////////////////////////");
     //  Serial.print("left move");
@@ -40,6 +40,10 @@ void BFver( int x )
      motor(2, 0);
      motor(3, 0);
      motor(4, 0);
+    //  if(x > 10 || x < -10)
+    //  {
+    //   isAutoAim = true;
+    //  }
    }
 }
 // ///////////////////////////////////////////////////////         PID            ////////////////////////////////////
