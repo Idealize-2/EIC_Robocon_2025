@@ -57,7 +57,7 @@ void TeleAutoUp()
 
   // Serial.println("Strart Teleing");
   //while( isTeleAuto )
-  TeleUp( 250 );
+  TeleUp( 255 );
   Serial.println( teleEncoder.getCount() );
   if( teleEncoder.getCount() - prev_count > DECIDE_STOP )
   {
@@ -78,7 +78,7 @@ void TeleAutoUp()
     {
       Serial.println("END---------------------------------------------");
       peakStall = teleEncoder.getCount()-2000;
-      TeleUp( 0 );
+      TeleUp( 30 );
       isTeleStall = true;
       isAutoUp = false;
     }
@@ -98,26 +98,28 @@ int downPwm = 50;
 void TeleStall(  )
 {
  // Serial.println(  peakStall - teleEncoder.getCount() );
-  if( lecateDelay )
-  {
-       if( (( millis() - start_operation ) > 2000))
-      {
-        motor(5,0);
-        motor(6,0);
-        lecateDelay = false;
-      }
-  }
+  // if( lecateDelay )
+  // {
+  //      if( (( millis() - start_operation ) > 1500))
+  //     {
+  //       motor(5,0);
+  //       motor(6,0);
+  //       lecateDelay = false;
+  //     }
+  // }
  
   if( isAutoDown )
   {
     if( ( millis() - last_operation ) > 100 )
     {
       long count_diff = prev_count - teleEncoder.getCount();
-      downPwm = map( count_diff , 0 , 1000 , 20 , 50);
-      count_diff = teleEncoder.getCount();
+      downPwm = map( count_diff , 0 , 2000 , 30 , 50);
+      //count_diff = teleEncoder.getCount();
       last_operation = millis();
+      prev_count = teleEncoder.getCount();
     }
-    TeleUp( 30 );
+    TeleUp( downPwm );
+    Serial.print( downPwm );
     Serial.println(" deceaseing ");
   }
   else
@@ -126,12 +128,12 @@ void TeleStall(  )
     if( (peakStall - teleEncoder.getCount() ) < 0  )
     {
       Serial.println(" Tooooo high ");
-      TeleUp( 25 );
+      TeleUp( 40 );
     }
     else if( abs( peakStall - teleEncoder.getCount() ) < Stall_bypass) 
     {
       Serial.println(" PEak  PEak Peak");
-      TeleUp( 175 );
+      TeleUp( 180 );
     }
     else
     {
@@ -140,24 +142,6 @@ void TeleStall(  )
       TeleUp( 210 );
     }
   }
-  
-  // int cal_diff = abs( peakStall - teleEncoder.getCount() );
-  // if( cal_diff > 2500 )
-  // {
-  //   Serial.println(" Too high");
-  //   TeleUp( 250 );
-  // }
-  // else if( cal_diff < Stall_bypass)
-  // {
-  //   Serial.println(" Peak Peak Peak ");
-  //   TeleUp( 175 );
-  // }
-  // else 
-  // {
-  //   Serial.println( cal_diff / 10);
-  //   // TeleUp( cal_diff  / 10 );
-  //   TeleUp( 210 );
-  // }
 }
 
 void TeleStop()

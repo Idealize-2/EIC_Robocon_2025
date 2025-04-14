@@ -193,46 +193,7 @@ void loop() {
       }
     }
   }
-  
-  
-  
-    //BFver( x );
-  // int xmap = map(abs(x),0,640,0,245);
-  // if(x > 10)
-  // {
-  //   Serial.print("////////////////////////////////Right/////////////////////////////////");
-  //   Serial.print("left move");
-  //   Serial.print(-xmap);
-  //   Serial.print("Right move");
-  //   Serial.println(xmap);
 
-  //   // motor(1,50);
-  //   // motor(2,-50);
-  //   // motor(3,50);
-  //   // motor(4,-50);
-
-  // }
-  // else if(x < -10)
-  // {
-  //   Serial.print("////////////////////////////////Left///////////////////////////////////");
-  //   Serial.print("left move");
-  //   Serial.print(xmap);
-  //   Serial.print("Right move");
-  //   Serial.println(-xmap);
-
-  //   // motor(1,-50);
-  //   // motor(2,50);
-  //   // motor(3,-50);
-  //   // motor(4,50);
-  // }
-  // else
-  // {
-  //   Serial.print("//////////////////////////////Center///////////////////////////////////");
-  //   // motor(1, 0);
-  //   // motor(2, 0);
-  //   // motor(3, 0);
-  //   // motor(4, 0);
-  // }
 
   // motor(6,-255); // motor 5 + backward - forward
   // motor(5,-255);
@@ -245,9 +206,4 @@ void loop() {
   // digitalWrite(INA, HIGH);
   // digitalWrite(INB, LOW);
 
-
-
-  // motor(9, -185);
-  // motor(10, -185);
-  //Serial.flush();
 }
