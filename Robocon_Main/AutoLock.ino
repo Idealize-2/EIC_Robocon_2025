@@ -4,8 +4,8 @@
 void BFver( int x )
 {
   //Serial.println( x );
-  int xmap = map(abs(x),15,640,17,30);
-   if(x > 10)
+  int xmap = map(abs(x),10,640,17,50);
+   if(x > 15)
    {
      //Serial.print("////////////////////////////////Right/////////////////////////////////");
     //  Serial.print("left move");
@@ -19,7 +19,7 @@ void BFver( int x )
      motor(4,-xmap);
 
    }
-   else if(x < -10)
+   else if(x < -15)
    {
      //Serial.print("////////////////////////////////Left///////////////////////////////////");
     //  Serial.print("left move");

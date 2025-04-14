@@ -126,13 +126,13 @@ void setup() {
   initializeController();
   resetEncoders();
 
-	//Serial.setTimeout(10);
+	Serial.setTimeout(1);
 
   pinMode(TelePinA, OUTPUT);
   pinMode(TelePinB, OUTPUT);
   pinMode(TelePWM, OUTPUT);
 
-  Serial.setTimeout(1);
+  //Serial.setTimeout(1);
 
   // /* ---------------- TEST ---------------- */
   // Serial.println("Starting...");
@@ -185,8 +185,7 @@ void loop() {
     {
       if( Serial.available() )
       {
-        String input = Serial.readStringUntil('\n');
-        x = input.toInt();
+        x = Serial.readString().toInt();
         BFver( x );
         Serial.println( x );
 
@@ -206,4 +205,11 @@ void loop() {
   // digitalWrite(INA, HIGH);
   // digitalWrite(INB, LOW);
 
+<<<<<<< HEAD
+=======
+
+
+  // motor(9, -185);
+  // motor(10, -185);
+>>>>>>> parent of e60a285 (Before restructure code)
 }
