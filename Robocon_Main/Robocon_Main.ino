@@ -5,20 +5,31 @@
 #include <math.h>
 #include <Bluepad32.h>
 #include "Mapf.h"
+#include "Motor.h"
 
+//DriveBase Address
 #define Left_I2C_ADDRESS 0x50
 #define Right_I2C_ADDRESS 0x57
 #define Front_I2C_ADDRESS 0x85
 #define Back_I2C_ADDRESS 0x86
+// DriveBase Define
+MotorI2C motor1( Left_I2C_ADDRESS , Front_I2C_ADDRESS , true ); // Front Left
+MotorI2C motor2( Right_I2C_ADDRESS , Front_I2C_ADDRESS , true ); // Front Right
+MotorI2C motor3( Left_I2C_ADDRESS , Back_I2C_ADDRESS , true ); // Back Left
+MotorI2C motor4( Right_I2C_ADDRESS , Back_I2C_ADDRESS , true ); // Back Right
 
+//Smile Drive communication
 #define MOTOR_SDA 21
 #define MOTOR_SCL 22
 #define MAX_RPM 500
 
-/*---------Lecate--------------*/
-#define Lecate_I2C_ADDRESS 0x54
-#define LeftLecatePin 0x85
-#define RightLecatePin 0x86
+/*---------Lecate Define--------------*/ //still dummie pin;
+// #define in1LecatePin 0
+// #define in2LecatePin 1
+// #define pwmLecatePin 2
+// // Lecate Define
+// MotorPIN Lecate( in1LecatePin , in2LecatePin , pwmLecatePin );
+
 
 /*---------Test Lecate Button---------*/
 bool Xpressed = false;
@@ -27,20 +38,38 @@ bool Xpressed = false;
 #define Gripper_I2C_ADDRESS 0x56
 #define LeftGripperPin 0x86
 #define RightGripperPin 0x85
+//Gripper Define
+MotorI2C Grip1(Gripper_I2C_ADDRESS , LeftGripperPin );
+MotorI2C Grip2(Gripper_I2C_ADDRESS , RightGripperPin );
+
 
 /*----------/Telescopic------------*/
-// int IN1A = 17;
-// int IN2A = 16;
-#define FEEDER_I2C_ADDRESS 0x51
-#define FeederPin 0x85
 // #define RightTelescopicPin 0x86
 #define TelePinA 18
 #define TelePinB 19
 #define TelePWM 17
+MotorPIN Tele( TelePinA , TelePinB , TelePWM );
 
+/*-----Feeder----*/
+#define Feeder_I2C_ADDRESS 0x51
+#define feederPin 0x85
+MotorI2C feeder( Feeder_I2C_ADDRESS , feederPin );
+
+
+//--------Tele Check etc. variable -----------//
+//-------state
 bool isTeleStall = false;
 bool isAutoUp = false;
 bool isAutoDown = false;
+
+//------for auto
+bool canTimeStamp = true;
+const long DECIDE_PEAK = 600; // 0.6 sec
+const long DECIDE_STOP = 500; // encoder step to decide it not going more than this
+long last_operation;
+long prev_count;
+long start_operation;
+//-----------------
 
 bool lecateDelay = false; // use for is Auto Down
 long peakStall;
@@ -49,9 +78,9 @@ long peakStall;
 bool isAutoAim = false;
 
 
+
 //Telescope encoder
 ESP32Encoder teleEncoder ;
-
 //encoder Pin
 #define teleEncoderPinA 14
 #define teleEncoderPinB 13
@@ -147,7 +176,7 @@ void loop() {
 
   //Serial.println( "Loop available" ) // for check loop
 
-  calculateRPMs();
+  //calculateRPMs();
   bool dataUpdated = BP32.update();
   if (dataUpdated) {
     //Serial.print("data updated");

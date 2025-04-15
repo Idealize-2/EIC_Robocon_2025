@@ -1,21 +1,4 @@
-void TeleUp( int pwmSpeed )
-{
-  //up
-  //Serial.println("LEt gooo");
-  digitalWrite( TelePinA , HIGH);
-  digitalWrite( TelePinB , LOW);
-  analogWrite( TelePWM , pwmSpeed );
-}
 
-void TeleUp( int pwmSpeed , int time )
-{
-  digitalWrite( TelePinA , HIGH );
-  digitalWrite( TelePinB , LOW );
-  analogWrite( TelePWM , pwmSpeed );
-
-  delay( time );
-  TeleStop( );
-}
 
 void TeleAutoDown( )
 {
@@ -37,13 +20,6 @@ void TeleAutoDown( )
     // }
 }
 
-bool canTimeStamp = true;
-const long DECIDE_PEAK = 600; // 0.6 sec
-const long DECIDE_STOP = 500; // encoder step to decide it not going more than this
-long last_operation;
-long prev_count;
-long start_operation;
-
 void TeleAutoUp()
 {
   // Need to put this v in controller to intialize
@@ -55,7 +31,7 @@ void TeleAutoUp()
 
   // Serial.println("Strart Teleing");
   //while( isTeleAuto )
-  TeleUp( 255 );
+  Tele.run( 255 );
   Serial.println( teleEncoder.getCount() );
   if( teleEncoder.getCount() - prev_count > DECIDE_STOP )
   {
@@ -76,7 +52,7 @@ void TeleAutoUp()
     {
       Serial.println("END---------------------------------------------");
       peakStall = teleEncoder.getCount()-1500;
-      TeleUp( 0 );
+      Tele.stop();
       isTeleStall = true;
       isAutoUp = false;
     }
@@ -116,7 +92,7 @@ void TeleStall(  )
       last_operation = millis();
       prev_count = teleEncoder.getCount();
     }
-    TeleUp( downPwm );
+    Tele.run( downPwm );
     Serial.print( downPwm );
     Serial.println(" deceaseing ");
   }
@@ -126,18 +102,18 @@ void TeleStall(  )
     if( (peakStall - teleEncoder.getCount() ) < 0  )
     {
       Serial.println(" Tooooo high ");
-      TeleUp( 40 );
+      Tele.run( 40 );
     }
     else if( abs( peakStall - teleEncoder.getCount() ) < Stall_bypass) 
     {
       Serial.println(" PEak  PEak Peak");
-      TeleUp( 180 );
+      Tele.run( 180 );
     }
     else
     {
       Serial.println(  peakStall - teleEncoder.getCount()  );
       Serial.println(" Up Up Up");
-      TeleUp( 210 );
+      Tele.run( 210 );
     }
   }
 }

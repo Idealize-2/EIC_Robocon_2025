@@ -13,10 +13,10 @@ void BFver( int x )
     //  Serial.print("Right move");
     //  Serial.println(xmap);
 
-     motor(1,xmap);
-     motor(2,-xmap);
-     motor(3,xmap);
-     motor(4,-xmap);
+     motor1.run( xmap );
+     motor2.run( -xmap );
+     motor3.run( xmap );
+     motor4.run( -xmap );
 
    }
    else if(x < -15)
@@ -27,19 +27,19 @@ void BFver( int x )
     //  Serial.print("Right move");
     //  Serial.println(-xmap);
 
-     motor(1,-xmap);
-     motor(2,xmap);
-     motor(3,-xmap);
-     motor(4,xmap);
+     motor1.run( -xmap );
+     motor2.run( xmap );
+     motor3.run( -xmap );
+     motor4.run( xmap );
    }
    else
    {
      //Serial.print("//////////////////////////////Center///////////////////////////////////");
      isAutoAim = false;
-     motor(1, 0);
-     motor(2, 0);
-     motor(3, 0);
-     motor(4, 0);
+     motor1.run(0);
+     motor2.run(0);
+     motor3.run(0);
+     motor4.run(0);
    }
 }
 // ///////////////////////////////////////////////////////         PID            ////////////////////////////////////
