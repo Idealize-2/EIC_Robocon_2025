@@ -60,16 +60,22 @@ void processControllers() {
         y_turn = mapf(myController->axisRY(), -511, 512, -1, 1);
       }
       //swap robot direction
-      if (myController->x()) 
+      
+      if (!myController->x() && Xpressed) 
       {
-        motor1.Swap();
-        motor2.Swap();
-        motor3.Swap();   
-        motor4.Swap();
+          motor1.Swap();
+          motor2.Swap();
+          motor3.Swap();   
+          motor4.Swap();
+          delay( 10 );
+          Serial.println("------------------swap-------------------");
       }
+      Xpressed = myController->x();
+      
 
       if ( myController->a() )
       {
+        feeder.run( 0 );
       }
 
       if( myController->b() )
@@ -106,13 +112,10 @@ void processControllers() {
       }
       if ( myController->r1() )
       {
-        // Serial.println("X pressd");
+        // Serial.println("X pressd")
 
-        feeder.run( 200 );
-        delay( 800 );
-        feeder.run( -50 );
-        delay( 300 );
-        feeder.run( 0 );
+        feeder.run( 250 );
+        
 
       }
       if( myController->r2() )

@@ -29,6 +29,24 @@ class MotorI2C {       // The class
       Wire.write(int(abs(pwm)));
       Wire.endTransmission();
     }
+    void run( float pwm , long time )
+    {
+      Wire.beginTransmission( this->driverAddress );
+      Wire.write( this->motorAddress );
+      int dir;
+      if( swap_dir ) dir = pwm > 0  ? 2 : 1;
+      else dir = pwm > 0  ? 1 : 2;
+
+      if (pwm == 0) { dir = 3; }
+      Wire.write(dir);
+      Wire.write(int(abs(pwm)));
+
+      delay( time );
+
+      Wire.endTransmission();
+    }
+
+    
     void Swap()
     {
       this->swap_dir = !this->swap_dir;

@@ -29,19 +29,20 @@ void movebase(int rpm, float theta, int turn) {
   float sin_theta = sin(theta - M_PI / 4);
   float cos_theta = cos(theta - M_PI / 4);
   float max_value = max(abs(sin_theta), abs(cos_theta));
+  int speed1 , speed2 , speed3 , speed4;
   if(!motor1.dir())
   {
-    int speed1 = rpm * cos_theta / max_value + turn;
-    int speed2 = rpm * sin_theta / max_value + turn;
-    int speed3 = rpm * sin_theta / max_value - turn;
-    int speed4 = rpm * cos_theta / max_value - turn;
+    speed1 = rpm * cos_theta / max_value + turn;
+    speed2 = rpm * sin_theta / max_value + turn;
+    speed3 = rpm * sin_theta / max_value - turn;
+    speed4 = rpm * cos_theta / max_value - turn;
   }
   else
   {
-    int speed1 = rpm * cos_theta / max_value - turn;
-    int speed2 = rpm * sin_theta / max_value - turn;
-    int speed3 = rpm * sin_theta / max_value + turn;
-    int speed4 = rpm * cos_theta / max_value + turn;
+    speed1 = rpm * cos_theta / max_value - turn;
+    speed2 = rpm * sin_theta / max_value - turn;
+    speed3 = rpm * sin_theta / max_value + turn;
+    speed4 = rpm * cos_theta / max_value + turn;
   }
   
 

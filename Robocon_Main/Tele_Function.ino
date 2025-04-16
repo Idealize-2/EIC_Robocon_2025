@@ -12,25 +12,10 @@ void TeleAutoDown( )
       TeleStop();
       Serial.println("----- End Auto Down -----");
     }
-    // if( canLowerPeak )
-    // {
-    //   peakStall -= 100 ;
-    //   canLowerPeak = false;
-    //   Serial.println(" -----------set----------- ");
-    // }
 }
 
 void TeleAutoUp()
 {
-  // Need to put this v in controller to intialize
-  // const long DECIDE_PEAK = 600; // 0.6 sec
-  // const long DECIDE_STOP = 500; // encoder step to decide it not going more than this
-  // // long start_operation = millis(); // idk why i put this but it cool 😎
-  // long last_operation = millis();
-  // long prev_count = teleEncoder.getCount(); //intialize prev_count
-
-  // Serial.println("Strart Teleing");
-  //while( isTeleAuto )
   Tele.run( 255 );
   Serial.println( teleEncoder.getCount() );
   if( teleEncoder.getCount() - prev_count > DECIDE_STOP )
@@ -76,8 +61,7 @@ void TeleStall(  )
   // {
   //      if( (( millis() - start_operation ) > 1500))
   //     {
-  //       motor(5,0);
-  //       motor(6,0);
+  //       Lecate.run( 0 );
   //       lecateDelay = false;
   //     }
   // }
@@ -102,7 +86,7 @@ void TeleStall(  )
     if( (peakStall - teleEncoder.getCount() ) < 0  )
     {
       Serial.println(" Tooooo high ");
-      Tele.run( 40 );
+      Tele.run( 50 );
     }
     else if( abs( peakStall - teleEncoder.getCount() ) < Stall_bypass) 
     {

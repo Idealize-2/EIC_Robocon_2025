@@ -13,10 +13,10 @@
 #define Front_I2C_ADDRESS 0x85
 #define Back_I2C_ADDRESS 0x86
 // DriveBase Define
-MotorI2C motor1( Left_I2C_ADDRESS , Front_I2C_ADDRESS , true ); // Front Left
-MotorI2C motor2( Right_I2C_ADDRESS , Front_I2C_ADDRESS , true ); // Front Right
-MotorI2C motor3( Left_I2C_ADDRESS , Back_I2C_ADDRESS , true ); // Back Left
-MotorI2C motor4( Right_I2C_ADDRESS , Back_I2C_ADDRESS , true ); // Back Right
+MotorI2C motor1( Left_I2C_ADDRESS , Front_I2C_ADDRESS ); // Front Left
+MotorI2C motor2( Right_I2C_ADDRESS , Front_I2C_ADDRESS ); // Front Right
+MotorI2C motor3( Left_I2C_ADDRESS , Back_I2C_ADDRESS ); // Back Left
+MotorI2C motor4( Right_I2C_ADDRESS , Back_I2C_ADDRESS ); // Back Right
 
 //Smile Drive communication
 #define MOTOR_SDA 21
@@ -53,7 +53,7 @@ MotorPIN Tele( TelePinA , TelePinB , TelePWM );
 /*-----Feeder----*/
 #define Feeder_I2C_ADDRESS 0x51
 #define feederPin 0x85
-MotorI2C feeder( Feeder_I2C_ADDRESS , feederPin );
+MotorI2C feeder( Feeder_I2C_ADDRESS , feederPin , true);
 
 
 //--------Tele Check etc. variable -----------//
@@ -79,9 +79,9 @@ bool isAutoAim = false;
 
 
 
-//Telescope encoder
+//---------------Telescope encoder
 ESP32Encoder teleEncoder ;
-//encoder Pin
+//---------------------encoder Pin
 #define teleEncoderPinA 14
 #define teleEncoderPinB 13
 
@@ -214,7 +214,7 @@ void loop() {
     {
       if( Serial.available() )
       {
-         x = Serial.readString().toInt();
+         //x = Serial.readString().toInt();
          String input = Serial.readStringUntil('\n');
          x = input.toInt();
          BFver( x );
