@@ -82,6 +82,9 @@ long peakStall;
 bool isAutoAim = false;
 
 // GlobalDelay Call
+vector<GlobalDelay> allGlobalDelay;
+allGlovalDelay.push( []() { /*function*/}; );
+
 
 
 
@@ -192,6 +195,11 @@ void loop() {
 
   //Serial.println( teleEncoder.getCount() );
   // TeleUp(200,500);
+  for (auto& func : allGlobalDelay )
+  {
+    func.call();
+  }
+  
 
 
 
