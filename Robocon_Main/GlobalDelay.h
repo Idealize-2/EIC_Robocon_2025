@@ -2,25 +2,35 @@
 
 class GlobalDelay {
   private:
-    function<void()> storedFunction;
-    long time;
-    bool isRunning;
+    function<void(long time)> storedFunction;
+    long time, loop;    
+    bool isActivated = false;
   public:
     GlobalDelay(std::function<void()> func)
     {
       this->storedFunction = func;
     }
-    void call(long time)
+    void call()
     {
-      if( this->isRunning )
+      if( this->isActivated )
       {
-        func();
-        is runnung
-      }
-      else
-      {
-        this->time = time;
-        this->isRunning = true;
-      }
+        storedFunction();
+        loop++;
+        if( loop >= time )
+        {
+          loop = 0;
+          this->Activated = false;
+        }  
+      }    
+
+    }
+    void activate(long time){
+      this->Activated = true;
+      this->time = time;
+      this->loop = 0;
+    }
+    void deactivate(){
+      this->Activated = false;
+      this->loop = 0;
     }
 };
