@@ -8,8 +8,10 @@
 #include "Motor.h"
 #include "GlobalDelay.h"
 
-// Include the vector library
-#include <vector>
+
+// Include the list library
+#include <list>
+
 
 //DriveBase Address
 #define Left_I2C_ADDRESS 0x50
@@ -36,7 +38,8 @@ MotorI2C motor4( Right_I2C_ADDRESS , Back_I2C_ADDRESS ); // Back Right
 
 
 /*---------Test Lecate Button---------*/
-bool Xpressed = false;
+bool Xstate = false;
+bool Astate = false;
 
 /*---------Gripper---------*/
 #define Gripper_I2C_ADDRESS 0x56
@@ -82,8 +85,10 @@ long peakStall;
 bool isAutoAim = false;
 
 // GlobalDelay Call
-vector<GlobalDelay> allGlobalDelay;
-allGlovalDelay.push( []() { /*function*/}; );
+//allGlovalDelay.push( []() { /*function*/}; );
+std::list<GlobalDelay> AllDelay;
+
+
 
 
 
@@ -107,23 +112,23 @@ float y_turn = 0;
 
 /* ---------------- ENOCODERS INIT ---------------- */
 // Define pin numbers for encoder A and B channels
-const int encoder1PinA = 32;
-const int encoder1PinB = 33;
+// const int encoder1PinA = 32;
+// const int encoder1PinB = 33;
 
-const int encoder2PinA = 25;
-const int encoder2PinB = 26;
+// const int encoder2PinA = 25;
+// const int encoder2PinB = 26;
 
-const int encoder3PinA = 14;
-const int encoder3PinB = 27;
+// const int encoder3PinA = 14;
+// const int encoder3PinB = 27;
 
-const int encoder4PinA = 12;
-const int encoder4PinB = 13;
+// const int encoder4PinA = 12;
+// const int encoder4PinB = 13;
 
-// Create an encoder object
-ESP32Encoder encoder1;
-ESP32Encoder encoder2;
-ESP32Encoder encoder3;
-ESP32Encoder encoder4;
+// // Create an encoder object
+// ESP32Encoder encoder1;
+// ESP32Encoder encoder2;
+// ESP32Encoder encoder3;
+// ESP32Encoder encoder4;
 
 
 
@@ -140,11 +145,13 @@ int rpm4 = 0;
 long lastTime = 0;
 int ppr = 2048;
 
-double Kp = 0.7, Ki = 5, Kd = 0;
-PID_v2 PID_encoder1(Kp, Ki, Kd, PID::Direct);
-PID_v2 PID_encoder2(Kp, Ki, Kd, PID::Direct);
-PID_v2 PID_encoder3(Kp, Ki, Kd, PID::Direct);
-PID_v2 PID_encoder4(Kp, Ki, Kd, PID::Direct);
+// double Kp = 0.7, Ki = 5, Kd = 0;
+// PID_v2 PID_encoder1(Kp, Ki, Kd, PID::Direct);
+// PID_v2 PID_encoder2(Kp, Ki, Kd, PID::Direct);
+// PID_v2 PID_encoder3(Kp, Ki, Kd, PID::Direct);
+// PID_v2 PID_encoder4(Kp, Ki, Kd, PID::Direct);
+
+PID_v2 PID_camera_x(0.2, 0, 0, PID::Direct);
 
 float RPMToPWM(float rpm) {
   return abs(rpm / MAX_RPM * 255);
@@ -171,6 +178,9 @@ void setup() {
   pinMode(TelePinB, OUTPUT);
   pinMode(TelePWM, OUTPUT);
 
+  PID_camera_x.Start(0, 0, 0);
+  PID_camera_x.SetOutputLimits(-50, 50);
+
   //Serial.setTimeout(1);
 
   // /* ---------------- TEST ---------------- */
@@ -195,9 +205,15 @@ void loop() {
 
   //Serial.println( teleEncoder.getCount() );
   // TeleUp(200,500);
-  for (auto& func : allGlobalDelay )
+  Serial.println( AllDelay.size() );
+  for (auto it = AllDelay.begin() ; it != AllDelay.end() ;)
   {
-    func.call();
+      if( !(*it).alive() ) it = AllDelay.erase(it);
+      else
+      {
+        (*it).call();
+        ++it;
+      }
   }
   
 

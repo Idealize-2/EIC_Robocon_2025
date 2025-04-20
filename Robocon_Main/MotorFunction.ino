@@ -4,15 +4,15 @@ void initiateMotorsAndEncoders() {
   Wire.begin(MOTOR_SDA, MOTOR_SCL);
 
   //--------recently added-------//
-  pinMode( teleEncoderPinA , INPUT );
-  pinMode( teleEncoderPinB , INPUT );
+  // pinMode( teleEncoderPinA , INPUT );
+  // pinMode( teleEncoderPinB , INPUT );
   //-----------------------------//
 
   // Enable the weak pull up resistors
-  ESP32Encoder::useInternalWeakPullResistors = puType::up;
+  // ESP32Encoder::useInternalWeakPullResistors = puType::up;
 
   //--------recently added-------//
-  teleEncoder.attachFullQuad( teleEncoderPinA , teleEncoderPinB ); 
+  // teleEncoder.attachFullQuad( teleEncoderPinA , teleEncoderPinB ); 
   //-----------------------------//
 }
 

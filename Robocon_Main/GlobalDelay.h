@@ -3,45 +3,57 @@
 class GlobalDelay {
   private:
     //storedFunction = []() { runMotor(200); };
-    function<void(  )> storedFunction;
-    long time = 0, loop = 0;  
-    bool isActivated = false;
+    std::function<void(  )> storedFunction;
+    std::function<void(  )> endFunction;
+    
+    unsigned long long time = 0, start_time = 0;  
+    bool isActivated = true;
   public:
-    GlobalDelay(function<void(  )> func)
+
+    GlobalDelay(std::function<void(  )> func , std::function<void(  )> endFunc , long long time)
     {
       this->storedFunction = func;
+      this->endFunction = endFunc;
+      this->time = time;
+      this->start_time = millis();
+      //this->time = time;
     }
 
     // Destructor
     ~GlobalDelay() {
+      endFunction();
       // Optional debug message
-      Serial.println("GlobalDelay destroyed");
+      //Serial.println("GlobalDelay destroyed");
     }
 
     void call()
     {
-      if( !this->isActivated )return;
+      if( !this->alive() )return;
+      // Serial.print( loop );
+      // Serial.print( ' ' );
       storedFunction();
-      loop++;
-      if( loop >= time )
+      //delay(1);
+      //Serial.println(millis() - start_time);
+      if( millis() - start_time >= time  )
       {
-        loop = 0;
+        start_time = 0;
         this->isActivated = false;
       }     
 
     }
-    void activate(long time){
-      this->isActivated = true;
-      this->time = time;
-      this->loop = 0;
+
+    bool alive()
+    {
+      return this->isActivated;
     }
-    void activate(long time){
-      this->isActivated = true;
-      this->time = time;
-      this->loop = 0;
-    }
-    void deactivate(){
-      this->isActivated = false;
-      this->loop = 0;
-    }
+    // void activate(long time){
+    //   this->isActivated = true;
+    //   this->time = time;
+    //   this->loop = 0;
+    // }
+    // void deactivate(){
+    //   this->isActivated = false;
+    //   this->loop = 0;
+    // }
+
 };

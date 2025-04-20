@@ -61,7 +61,7 @@ void processControllers() {
       }
       //swap robot direction
       
-      if (!myController->x() && Xpressed) 
+      if (!myController->x() && Xstate) 
       {
           motor1.Swap();
           motor2.Swap();
@@ -70,13 +70,14 @@ void processControllers() {
           delay( 10 );
           Serial.println("------------------swap-------------------");
       }
-      Xpressed = myController->x();
+      Xstate = myController->x();
       
 
-      if ( myController->a() )
+      if ( myController->a() && !Astate )
       {
-        feeder.run( 0 );
+        AllDelay.push_back( GlobalDelay([]() { Serial.println("this is fire!!");} ,[]() { Serial.println("End delay"); } , 1000));
       }
+      Astate = myController->a();
 
       if( myController->b() )
       {
@@ -114,7 +115,7 @@ void processControllers() {
       {
         // Serial.println("X pressd")
 
-        feeder.run( 250 );
+        feeder.run( 250);
         
 
       }
