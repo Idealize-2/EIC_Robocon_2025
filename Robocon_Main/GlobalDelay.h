@@ -21,6 +21,7 @@ class GlobalDelay {
 
     // Destructor
     ~GlobalDelay() {
+      Serial.println("End");
       endFunction();
       // Optional debug message
       //Serial.println("GlobalDelay destroyed");

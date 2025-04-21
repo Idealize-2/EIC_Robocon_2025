@@ -75,7 +75,9 @@ void processControllers() {
 
       if ( myController->a() && !Astate )
       {
-        AllDelay.push_back( GlobalDelay([]() { Serial.println("this is fire!!");} ,[]() { Serial.println("End delay"); } , 1000));
+        AllDelay.push_back( GlobalDelay( []() { Serial.println("this is fire!!");}
+         ,[]() { Serial.println("End delay"); } 
+         , 1000));
       }
       Astate = myController->a();
 
