@@ -37,9 +37,26 @@ MotorI2C motor4( Right_I2C_ADDRESS , Back_I2C_ADDRESS ); // Back Right
 // MotorPIN Lecate( in1LecatePin , in2LecatePin , pwmLecatePin );
 
 
-/*---------Test Lecate Button---------*/
-bool Xstate = false;
-bool Astate = false;
+/*---------Controller State Button config---------*/
+bool XState = false;
+bool YState = false;
+bool AState = false;
+bool BState = false;
+
+bool L1State = false;
+bool L2State = false;
+bool R1State = false;
+bool R2State = false;
+
+bool miscSystemState = false;
+bool miscHomeState = false;
+bool miscBackState = false;
+
+bool butUpState = false;
+bool butDownState = false;
+bool butLeftState = false;
+bool butRightState = false;
+
 
 /*---------Gripper---------*/
 #define Gripper_I2C_ADDRESS 0x56
