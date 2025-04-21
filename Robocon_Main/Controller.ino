@@ -51,7 +51,15 @@ void onDisconnectedController(ControllerPtr ctl) {
 
 void processControllers() {
   for (auto myController : myControllers) {
+    Serial.println( canRumble );
+    if( canRumble && myController && myController->isConnected() ){
+         myController->playDualRumble(0 /* delayedStartMs */, 250 /* durationMs */, 0x80 /* weakMagnitude */,
+                            0x40 /* strongMagnitude */);
+         Serial.println("Rumbleing");
+    } 
+    
     if (myController && myController->isConnected() && myController->hasData()) {
+
       //Serial.println("has data");
       if (myController->isGamepad()) {
         x_ctrl = mapf(myController->axisX(), -511, 512, -1, 1);
@@ -59,8 +67,35 @@ void processControllers() {
         x_turn = mapf(myController->axisRX(), -511, 512, -1, 1);
         y_turn = mapf(myController->axisRY(), -511, 512, -1, 1);
       }
+
+      if( myController->miscHome() ){
+        Serial.println("LEft");
+      }
+      if( myController->miscCapture() ){
+        Serial.println("Center");
+      }
+      if( myController->miscSelect() ){
+        Serial.println("Right");
+      }
+
+      if( myController->dpad() == 1 ) {
+          Serial.println("Up");
+      }
+      if( myController->dpad() == 2 ) {
+          Serial.println("Down");
+      }
+      if( myController->dpad() == 8 ) {
+          Serial.println("Left");
+      }
+      if( myController->dpad() == 4 ) {
+          Serial.println("Right");
+      }
+      butUpState = myController->dpad() == 1;
+      butDownState = myController->dpad() == 2;
+      butLeftState = myController->dpad() == 8;
+      butRightState = myController->dpad() == 4;
+
       //swap robot direction
-      
       if (!myController->x() && XState) 
       {
           motor1.Swap();
@@ -71,6 +106,8 @@ void processControllers() {
           Serial.println("------------------swap-------------------");
       }
       XState = myController->x();
+
+      
       
 
       if ( myController->a() && !AState )
@@ -78,6 +115,7 @@ void processControllers() {
         AllDelay.push_back( GlobalDelay( []() { Serial.println("this is fire!!");}
          ,[]() { Serial.println("End delay"); } 
          , 1000));
+        //Serial.println("x");
       }
       AState = myController->a();
 
@@ -113,22 +151,48 @@ void processControllers() {
         }
 
       }
+
+
+      if ( myController->l1() )
+      {
+        Serial.println("l1 pressd");
+      }
+      if ( myController->l2() )
+      {
+        Serial.println("l2 pressd");
+      }
+      if ( myController->thumbL() )
+      {
+        Serial.println("l3 pressd");
+      }
       
       if ( myController->r1() )
       {
         // Serial.println("X pressd")
-
-        feeder.run( 250);
-        
-
+        //feeder.run( 250);
       }
-      if( myController->r2() )
+      if( myController->r2() && !R2State )
       {
-        Serial.println("------------OK------------------");
-        if ( !isAutoAim )
-        {
-          isAutoAim = true;
-        } 
+        Serial.print("-------------------------------Hello-------------------------------");
+        
+        AllDelay.push_back( GlobalDelay([]() {
+          if( Serial.available() )
+          {
+            canRumble = true;
+            //x = Serial.readString().toInt();
+            String input = Serial.readStringUntil('\n');
+            x = input.toInt();
+            BFver( x );
+            //Serial.println( x );
+          }
+        } ,
+        []() {Serial.println("End Auto Aim"); canRumble = false;}, 5000));
+      }
+      R2State = myController->r2();
+
+      if ( myController->thumbR() )
+      {
+        Serial.println("r3 pressd");
       }
     }
   }

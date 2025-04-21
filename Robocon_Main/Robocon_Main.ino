@@ -57,6 +57,9 @@ bool butDownState = false;
 bool butLeftState = false;
 bool butRightState = false;
 
+//Rumble state
+bool canRumble = false;
+
 
 /*---------Gripper---------*/
 #define Gripper_I2C_ADDRESS 0x56
@@ -187,7 +190,9 @@ void setup() {
   Serial.begin(115200);
   initiateMotorsAndEncoders();
   initializeController();
-  resetEncoders();
+
+  // penrai wa bug reset encoder;
+  //resetEncoders();
 
 	Serial.setTimeout(1);
 
@@ -222,7 +227,7 @@ void loop() {
 
   //Serial.println( teleEncoder.getCount() );
   // TeleUp(200,500);
-  Serial.println( AllDelay.size() );
+  //Serial.println( AllDelay.size() );
   for (auto it = AllDelay.begin() ; it != AllDelay.end() ;)
   {
       if( !(*it).alive() ) it = AllDelay.erase(it);
@@ -256,21 +261,20 @@ void loop() {
   // --------------------------------------------- //
 
   //Serial.println( x );
-  if( isAutoAim )
-  {
-    while( isAutoAim )
-    {
-      if( Serial.available() )
-      {
-         //x = Serial.readString().toInt();
-         String input = Serial.readStringUntil('\n');
-         x = input.toInt();
-         BFver( x );
-         Serial.println( x );
-
-      }
-    }
-  }
+  // if( isAutoAim )
+  // {
+  //   while( isAutoAim )
+  //   {
+  //     if( Serial.available() )
+  //     {
+  //        //x = Serial.readString().toInt();
+  //        String input = Serial.readStringUntil('\n');
+  //        x = input.toInt();
+  //        BFver( x );
+  //        Serial.println( x );
+  //     }
+  //   }
+  // }
 
 
   // motor(6,-255); // motor 5 + backward - forward
