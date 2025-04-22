@@ -21,7 +21,7 @@ void initiateMotorsAndEncoders() {
 void resetEncoders() {
   //--------recently added-------//
   teleEncoder.setCount( 0 );
-  teleEncoder.setFilter( 10 );
+  teleEncoder.setFilter( 10 ); 
   //-----------------------------//
 }
 

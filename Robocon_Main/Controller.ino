@@ -51,12 +51,12 @@ void onDisconnectedController(ControllerPtr ctl) {
 
 void processControllers() {
   for (auto myController : myControllers) {
-    Serial.println( canRumble );
-    if( canRumble && myController && myController->isConnected() ){
-         myController->playDualRumble(0 /* delayedStartMs */, 250 /* durationMs */, 0x80 /* weakMagnitude */,
-                            0x40 /* strongMagnitude */);
-         Serial.println("Rumbleing");
-    } 
+    // Serial.println( canRumble );
+    // if( canRumble && myController && myController->isConnected() ){
+    //      myController->playDualRumble(0 /* delayedStartMs */, 250 /* durationMs */, 0x80 /* weakMagnitude */,
+    //                         0x40 /* strongMagnitude */);
+    //      Serial.println("Rumbleing");
+    // } 
     
     if (myController && myController->isConnected() && myController->hasData()) {
 
@@ -84,11 +84,32 @@ void processControllers() {
       if( myController->dpad() == 2 ) {
           Serial.println("Down");
       }
-      if( myController->dpad() == 8 ) {
-          Serial.println("Left");
+
+      if( isKeep )
+      {
+        Grip7.run( -70 );
+        Grip8.run( 70 );
       }
-      if( myController->dpad() == 4 ) {
+      else
+      {
+        Grip7.run( 50 );
+        Grip8.run( -50 );
+      }
+
+      if( myController->dpad() == 8 ) 
+      {
+          Serial.println("Left");
+          Grip7.run( 100 );
+          Grip8.run( -100 );
+          isKeep = false;
+
+      }
+      if( myController->dpad() == 4 ) 
+      {
           Serial.println("Right");
+          Grip7.run( -100 );
+          Grip8.run( 100 );
+          isKeep = true;
       }
       butUpState = myController->dpad() == 1;
       butDownState = myController->dpad() == 2;
@@ -140,6 +161,7 @@ void processControllers() {
       if ( myController->y() ) {
         // motor(9, -185);
         // motor(10, -185);
+        Serial.println("----satrt deceaseing-----");
         if( !isAutoDown )
         {
           Serial.println("----satrt deceaseing-----");
@@ -152,25 +174,54 @@ void processControllers() {
 
       }
 
+      
+      if ( myController->l1() && !L1State )
+      {
+        
+      }
+      L1State = myController->l1();
 
-      if ( myController->l1() )
+      if ( myController->l2() && !L2State )
       {
-        Serial.println("l1 pressd");
+        isShoot = !isShoot;
+        if( isShoot ){
+          Shooter.run( 255 );
+        }
+        else
+        {
+          Shooter.run( 0 );
+        }
       }
-      if ( myController->l2() )
-      {
-        Serial.println("l2 pressd");
-      }
+      L2State = myController->l2();
+
       if ( myController->thumbL() )
       {
         Serial.println("l3 pressd");
       }
       
-      if ( myController->r1() )
+      if ( myController->r1() && !R1State )
       {
         // Serial.println("X pressd")
-        //feeder.run( 250);
+        // understand it if you can
+        AllDelay.push_back( 
+          GlobalDelay( []() {feeder.run( 100 ); },
+                       []() { AllDelay.push_back(
+                                GlobalDelay(
+                                  []() {feeder.run( 250 );},
+                                  []() {AllDelay.push_back(
+                                          GlobalDelay(
+                                            []() {feeder.run( -50 );},
+                                            []() {feeder.run( 0 );},
+                                            300
+                                          ));},
+                                  300
+                                )
+                        );},
+            600         
+          )
+        );
       }
+      R1State = myController->r1();
       if( myController->r2() && !R2State )
       {
         Serial.print("-------------------------------Hello-------------------------------");
@@ -178,7 +229,6 @@ void processControllers() {
         AllDelay.push_back( GlobalDelay([]() {
           if( Serial.available() )
           {
-            canRumble = true;
             //x = Serial.readString().toInt();
             String input = Serial.readStringUntil('\n');
             x = input.toInt();
@@ -186,7 +236,7 @@ void processControllers() {
             //Serial.println( x );
           }
         } ,
-        []() {Serial.println("End Auto Aim"); canRumble = false;}, 5000));
+        []() {Serial.println("End Auto Aim");}, 5000));
       }
       R2State = myController->r2();
 

@@ -36,7 +36,7 @@ void TeleAutoUp()
     if ( millis() - last_operation > DECIDE_PEAK ) 
     {
       Serial.println("END---------------------------------------------");
-      peakStall = teleEncoder.getCount()-1500;
+      peakStall = teleEncoder.getCount()-600;
       Tele.stop();
       isTeleStall = true;
       isAutoUp = false;

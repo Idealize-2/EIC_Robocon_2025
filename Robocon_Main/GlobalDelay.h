@@ -6,7 +6,7 @@ class GlobalDelay {
     std::function<void(  )> storedFunction;
     std::function<void(  )> endFunction;
     
-    unsigned long long time = 0, start_time = 0;  
+    long long time = 0, start_time = 0;  
     bool isActivated = true;
   public:
 
@@ -16,13 +16,13 @@ class GlobalDelay {
       this->endFunction = endFunc;
       this->time = time;
       this->start_time = millis();
+      this->isActivated = true;
       //this->time = time;
     }
 
     // Destructor
     ~GlobalDelay() {
-      Serial.println("End");
-      endFunction();
+      //Lul noob
       // Optional debug message
       //Serial.println("GlobalDelay destroyed");
     }
@@ -39,6 +39,8 @@ class GlobalDelay {
       {
         start_time = 0;
         this->isActivated = false;
+        Serial.print("End      ");
+        endFunction();
       }     
 
     }

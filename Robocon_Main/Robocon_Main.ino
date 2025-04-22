@@ -58,7 +58,7 @@ bool butLeftState = false;
 bool butRightState = false;
 
 //Rumble state
-bool canRumble = false;
+bool isShoot = false;
 
 
 /*---------Gripper---------*/
@@ -66,15 +66,17 @@ bool canRumble = false;
 #define LeftGripperPin 0x86
 #define RightGripperPin 0x85
 //Gripper Define
-MotorI2C Grip1(Gripper_I2C_ADDRESS , LeftGripperPin );
-MotorI2C Grip2(Gripper_I2C_ADDRESS , RightGripperPin );
+MotorI2C Grip7(Gripper_I2C_ADDRESS , LeftGripperPin );
+MotorI2C Grip8(Gripper_I2C_ADDRESS , RightGripperPin );
 
+bool isKeep = false;
 
 /*----------/Telescopic------------*/
 // #define RightTelescopicPin 0x86
-#define TelePinA 18
-#define TelePinB 19
-#define TelePWM 17
+
+#define TelePinA 26
+#define TelePinB 25
+#define TelePWM 27
 MotorPIN Tele( TelePinA , TelePinB , TelePWM );
 
 /*-----Feeder----*/
@@ -107,6 +109,22 @@ bool isAutoAim = false;
 // GlobalDelay Call
 //allGlovalDelay.push( []() { /*function*/}; );
 std::list<GlobalDelay> AllDelay;
+
+
+// Shooter EV1 Ev2 PIn
+#define EV12 16
+#define EV12pwm 4
+#define free 15
+MotorPIN Shooter( EV12 , free ,EV12pwm );
+
+// NEw Ev4 LEcate
+#define E4inA 18 
+#define E4inB 19
+#define E4pwm 17
+MotorPIN Lecate( E4inA , E4inB , E4pwm );
+
+
+
 
 
 
@@ -192,13 +210,13 @@ void setup() {
   initializeController();
 
   // penrai wa bug reset encoder;
-  //resetEncoders();
+  resetEncoders();
 
 	Serial.setTimeout(1);
 
-  pinMode(TelePinA, OUTPUT);
-  pinMode(TelePinB, OUTPUT);
-  pinMode(TelePWM, OUTPUT);
+  // pinMode(TelePinA, OUTPUT);
+  // pinMode(TelePinB, OUTPUT);
+  // pinMode(TelePWM, OUTPUT);
 
   PID_camera_x.Start(0, 0, 0);
   PID_camera_x.SetOutputLimits(-50, 50);
@@ -230,7 +248,11 @@ void loop() {
   //Serial.println( AllDelay.size() );
   for (auto it = AllDelay.begin() ; it != AllDelay.end() ;)
   {
-      if( !(*it).alive() ) it = AllDelay.erase(it);
+      if( !(*it).alive() ) 
+      {
+        Serial.print( "Delete   ");
+        it = AllDelay.erase(it);
+      }
       else
       {
         (*it).call();
