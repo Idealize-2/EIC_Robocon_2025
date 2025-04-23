@@ -9,6 +9,7 @@ void TeleAutoDown( )
       isAutoUp = false;
       isAutoDown = false;
       peakStall = 0;
+      Lecate.run( 0 );
       TeleStop();
       Serial.println("----- End Auto Down -----");
     }
@@ -17,6 +18,7 @@ void TeleAutoDown( )
 void TeleAutoUp()
 {
   Tele.run( 255 );
+  Lecate.run( -180 );
   Serial.println( teleEncoder.getCount() );
   if( teleEncoder.getCount() - prev_count > DECIDE_STOP )
   {
@@ -36,6 +38,7 @@ void TeleAutoUp()
     if ( millis() - last_operation > DECIDE_PEAK ) 
     {
       Serial.println("END---------------------------------------------");
+      Lecate.run( 0 );
       peakStall = teleEncoder.getCount()-600;
       Tele.stop();
       isTeleStall = true;
@@ -77,6 +80,7 @@ void TeleStall(  )
       prev_count = teleEncoder.getCount();
     }
     Tele.run( downPwm );
+    Lecate.run( -180 );
     Serial.print( downPwm );
     Serial.println(" deceaseing ");
   }

@@ -66,9 +66,18 @@ class MotorPIN{
 
       void run( float pwm )
       {
-        digitalWrite( in1Pin , HIGH );
-        digitalWrite( in2Pin , LOW );
-        analogWrite( pwmPin , pwm );
+        if( pwm < 0)
+        {
+          digitalWrite( in1Pin , LOW );
+          digitalWrite( in2Pin , HIGH );
+        }
+        else
+        {
+          digitalWrite( in1Pin , HIGH );
+          digitalWrite( in2Pin , LOW );
+        }
+        
+        analogWrite( pwmPin , abs(pwm) );
       }
       void run( float pwm , long time )
       {

@@ -49,7 +49,7 @@ bool R1State = false;
 bool R2State = false;
 
 bool miscSystemState = false;
-bool miscHomeState = false;
+bool miscCenterState = false;
 bool miscBackState = false;
 
 bool butUpState = false;
@@ -57,8 +57,10 @@ bool butDownState = false;
 bool butLeftState = false;
 bool butRightState = false;
 
-//Rumble state
-bool isShoot = false;
+//Rumble 
+bool shootON = false;
+
+bool lecateOn = false;
 
 
 /*---------Gripper---------*/
@@ -121,8 +123,14 @@ MotorPIN Shooter( EV12 , free ,EV12pwm );
 #define E4inA 18 
 #define E4inB 19
 #define E4pwm 17
-MotorPIN Lecate( E4inA , E4inB , E4pwm );
+MotorPIN Lecate( E4inB , E4inA , E4pwm );
 
+
+//moveBaseOn
+bool onMoveExecute = false;
+
+//isfunctionActivate
+bool isFunctionActivate = false;
 
 
 
@@ -268,7 +276,10 @@ void loop() {
   float direction = atan2(x_ctrl, -y_ctrl);
   float turn = mapf(x_turn, -1, 1, -180, 180);
   float speed = sqrt((pow(x_ctrl, 2) + pow(y_ctrl, 2))) * 255;
-  movebase(speed, direction, turn);
+  if( !onMoveExecute ){
+    movebase(speed, direction, turn);
+  }
+  
 
   // -------main loop for stall Telescope -------- //
   //if(isTeleStall) TeleStall();
@@ -277,6 +288,17 @@ void loop() {
   if( isAutoUp ) TeleAutoUp();
   if( isAutoDown ) TeleAutoDown();
   if( isTeleStall )   TeleStall();
+
+  if( isKeep )
+  {
+    Grip7.run( -150 );
+    Grip8.run( 150 );
+  }
+  else
+  {
+    Grip7.run( 80 );
+    Grip8.run( -80 );
+  }
 
   //Serial.println( teleEncoder.getCount() ); // check TeleEncoder
 

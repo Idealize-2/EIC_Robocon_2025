@@ -49,6 +49,10 @@ class GlobalDelay {
     {
       return this->isActivated;
     }
+    bool disable()
+    {
+      this->isActivated = false;
+    }
     // void activate(long time){
     //   this->isActivated = true;
     //   this->time = time;

@@ -71,30 +71,46 @@ void processControllers() {
       if( myController->miscHome() ){
         Serial.println("LEft");
       }
-      if( myController->miscCapture() ){
+      
+      if( myController->miscCapture() && !miscCenterState ){
         Serial.println("Center");
+        motor1.Swap();
+        motor2.Swap();
+        motor3.Swap();   
+        motor4.Swap();
+        delay( 10 );
+        Serial.println("------------------swap-------------------");
       }
+      miscCenterState = myController->miscCapture();
+
       if( myController->miscSelect() ){
         Serial.println("Right");
       }
 
-      if( myController->dpad() == 1 ) {
-          Serial.println("Up");
+      if( myController->dpad() == 1 ) 
+      {
+          Serial.println("IN");
+          Lecate.run( 180 );
       }
-      if( myController->dpad() == 2 ) {
-          Serial.println("Down");
+      if( !myController->dpad() == 1 && butUpState )
+      {
+        Lecate.run( 0 );
       }
+      butUpState = myController->dpad() == 1;
 
-      if( isKeep )
+
+      if( myController->dpad() == 2 ) 
       {
-        Grip7.run( -70 );
-        Grip8.run( 70 );
+          Serial.println("Out");
+          Lecate.run( -180 );
       }
-      else
+      if( !myController->dpad() == 2 && butDownState  )
       {
-        Grip7.run( 50 );
-        Grip8.run( -50 );
+         Lecate.run( 0 );
       }
+      butDownState = myController->dpad() == 2;
+
+
 
       if( myController->dpad() == 8 ) 
       {
@@ -107,8 +123,8 @@ void processControllers() {
       if( myController->dpad() == 4 ) 
       {
           Serial.println("Right");
-          Grip7.run( -100 );
-          Grip8.run( 100 );
+          Grip7.run( -120 );
+          Grip8.run( 120 );
           isKeep = true;
       }
       butUpState = myController->dpad() == 1;
@@ -119,12 +135,7 @@ void processControllers() {
       //swap robot direction
       if (!myController->x() && XState) 
       {
-          motor1.Swap();
-          motor2.Swap();
-          motor3.Swap();   
-          motor4.Swap();
-          delay( 10 );
-          Serial.println("------------------swap-------------------");
+      
       }
       XState = myController->x();
 
@@ -140,7 +151,7 @@ void processControllers() {
       }
       AState = myController->a();
 
-      if( myController->b() )
+      if( myController->b() && !BState )
       {
           teleEncoder.setCount( 0 );
           teleEncoder.setFilter( 10 ); 
@@ -157,34 +168,41 @@ void processControllers() {
           isAutoUp = true;
           //TeleUp( 250 );
       }
+      BState = myController->b();
       //TeleAutoDown
-      if ( myController->y() ) {
+      if ( myController->y() && !YState ) {
         // motor(9, -185);
         // motor(10, -185);
-        Serial.println("----satrt deceaseing-----");
-        if( !isAutoDown )
+        if( isFunctionActivate )
         {
-          Serial.println("----satrt deceaseing-----");
-          //lecate.run(-50);
-          start_operation = millis();
-          lecateDelay = true;
-          isAutoDown = true;
-
+          isFunctionActivate = false;
+          AllDelay.push_back(
+            GlobalDelay(
+              []() {Lecate.run( -150 );},
+              []() {pressAutoDown();},
+              700
+            )
+          );
+        }
+        else
+        {
+          pressAutoDown();
         }
 
       }
+      YState = myController->y();
 
       
       if ( myController->l1() && !L1State )
       {
-        
+        autoPoiBall();
       }
       L1State = myController->l1();
 
       if ( myController->l2() && !L2State )
       {
-        isShoot = !isShoot;
-        if( isShoot ){
+        shootON = !shootON;
+        if( shootON ){
           Shooter.run( 255 );
         }
         else
@@ -201,27 +219,12 @@ void processControllers() {
       
       if ( myController->r1() && !R1State )
       {
-        // Serial.println("X pressd")
-        // understand it if you can
-        AllDelay.push_back( 
-          GlobalDelay( []() {feeder.run( 100 ); },
-                       []() { AllDelay.push_back(
-                                GlobalDelay(
-                                  []() {feeder.run( 250 );},
-                                  []() {AllDelay.push_back(
-                                          GlobalDelay(
-                                            []() {feeder.run( -50 );},
-                                            []() {feeder.run( 0 );},
-                                            300
-                                          ));},
-                                  300
-                                )
-                        );},
-            600         
-          )
-        );
+        //feed ball to shooter
+        shoot();
       }
       R1State = myController->r1();
+
+
       if( myController->r2() && !R2State )
       {
         Serial.print("-------------------------------Hello-------------------------------");
@@ -246,4 +249,72 @@ void processControllers() {
       }
     }
   }
+}
+
+void pressAutoDown()
+{
+  Serial.println("----satrt deceaseing-----");
+  if( !isAutoDown )
+  {
+    Serial.println("----satrt deceaseing-----");
+    start_operation = millis();
+    isAutoUp = false;
+    isAutoDown = true;
+  }
+}
+
+void shoot()
+{
+  AllDelay.push_back( 
+      GlobalDelay( []() {feeder.run( 100 ); },
+                    []() { AllDelay.push_back(
+                            GlobalDelay(
+                              []() {feeder.run( 250 );},
+                              []() {AllDelay.push_back(
+                                      GlobalDelay(
+                                        []() {feeder.run( -50 );},
+                                        []() {feeder.run( 0 );},
+                                        300
+                                      ));},
+                              300
+                            )
+                    );},
+        600         
+      )
+    );
+}
+
+void autoPoiBall(){
+  //Poi
+  isKeep = false;
+  //Delay
+  AllDelay.push_back(
+    GlobalDelay(
+      []() {},
+      []() {
+        AllDelay.push_back(
+            GlobalDelay(
+              []() {
+                Lecate.run(150);
+                onMoveExecute = true;
+                motor1.run(50);
+                motor2.run(50);
+                motor3.run(50);
+                motor4.run(50);
+              },
+              []() {
+                isFunctionActivate = true;
+                onMoveExecute = false;
+                motor1.run(0);
+                motor2.run(0);
+                motor3.run(0);
+                motor4.run(0);
+              },
+              500
+            )
+        );
+      },
+      1000
+    )
+  );
 }
