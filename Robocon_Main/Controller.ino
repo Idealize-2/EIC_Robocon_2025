@@ -67,6 +67,8 @@ void processControllers() {
         x_turn = mapf(myController->axisRX(), -511, 512, -1, 1);
         y_turn = mapf(myController->axisRY(), -511, 512, -1, 1);
       }
+  
+//--------------------------------------------------------------- MISC BUTTON ----------------------------------------------------------------------//
 
       if( myController->miscHome() ){
         Serial.println("LEft");
@@ -86,6 +88,11 @@ void processControllers() {
       if( myController->miscSelect() ){
         Serial.println("Right");
       }
+
+//--------------------------------------------------------------- MISC BUTTON ----------------------------------------------------------------------//
+
+
+//------------------------------------------------------------------- D PAD --------------------------------------------------------------------//
 
       if( myController->dpad() == 8 ) 
       {
@@ -144,21 +151,17 @@ void processControllers() {
         isAutoUp = false;
       }
       butDownState = myController->dpad() == 2;
+//------------------------------------------------------------------- D PAD --------------------------------------------------------------------//
 
-      butUpState = myController->dpad() == 1;
-      butDownState = myController->dpad() == 2;
-      butLeftState = myController->dpad() == 8;
-      butRightState = myController->dpad() == 4;
+
+//------------------------------------------------------------------- X A Y B -------------------------------------------------------------------//
 
       //swap robot direction
       if (!myController->x() && XState) 
       {
         isKeep = !isKeep;
       }
-      XState = myController->x();
-
-      
-      
+      XState = myController->x();      
 
       if ( myController->a() && !AState )
       {
@@ -174,6 +177,7 @@ void processControllers() {
           
       }
       BState = myController->b();
+
       //TeleAutoDown
       if ( myController->y() && !YState ) {
         // motor(9, -185);
@@ -197,7 +201,9 @@ void processControllers() {
       }
       YState = myController->y();
 
-      
+//------------------------------------------------------------------- X A Y B -------------------------------------------------------------------//
+
+//------------------------------------------------------------------- L1 L2 LTHUMP ------------------------------------------------------------------//
       if ( myController->l1() && !L1State )
       {
         autoPoiBall();
@@ -221,7 +227,11 @@ void processControllers() {
       {
         Serial.println("l3 pressd");
       }
-      
+
+//------------------------------------------------------------------- L1 L2 L THUMP ------------------------------------------------------------------//
+
+ //------------------------------------------------------------------- R1 R2 R THUMP ------------------------------------------------------------------//
+   
       if ( myController->r1() && !R1State )
       {
         //feed ball to shooter
@@ -252,9 +262,16 @@ void processControllers() {
       {
         Serial.println("r3 pressd");
       }
+
+ //------------------------------------------------------------------- R1 R2 R THUMP ------------------------------------------------------------------//
     }
   }
 }
+
+
+
+
+
 
 void pressAutoDown()
 {

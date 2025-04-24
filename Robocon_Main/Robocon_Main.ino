@@ -29,15 +29,7 @@ MotorI2C motor4( Right_I2C_ADDRESS , Back_I2C_ADDRESS ); // Back Right
 #define MOTOR_SCL 22
 #define MAX_RPM 500
 
-/*---------Lecate Define--------------*/ //still dummie pin;
-// #define in1LecatePin 0
-// #define in2LecatePin 1
-// #define pwmLecatePin 2
-// // Lecate Define
-// MotorPIN Lecate( in1LecatePin , in2LecatePin , pwmLecatePin );
-
-
-/*---------Controller State Button config---------*/
+/*--------------------------------------------------Controller State Button config------------------------------------------------------------------*/
 bool XState = false;
 bool YState = false;
 bool AState = false;
@@ -56,13 +48,24 @@ bool butUpState = false;
 bool butDownState = false;
 bool butLeftState = false;
 bool butRightState = false;
+/*--------------------------------------------------Controller State Button config------------------------------------------------------------------*/
 
-//Rumble 
+
+
+//----------------------------------------------------------- other state -------------------------------------------------------------------//
 bool shootON = false;
 
 bool lecateOn = false;
 
 bool isOnTop = false;
+
+//moveBaseOn
+bool onMoveExecute = false;
+
+//isfunctionActivate
+bool isFunctionActivate = false;
+//----------------------------------------------------------- other state -------------------------------------------------------------------//
+
 
 
 /*---------Gripper---------*/
@@ -76,8 +79,6 @@ MotorI2C Grip8(Gripper_I2C_ADDRESS , RightGripperPin );
 bool isKeep = false;
 
 /*----------/Telescopic------------*/
-// #define RightTelescopicPin 0x86
-
 #define TelePinA 26
 #define TelePinB 25
 #define TelePWM 27
@@ -90,7 +91,6 @@ MotorI2C feeder( Feeder_I2C_ADDRESS , feederPin , true);
 
 
 //--------Tele Check etc. variable -----------//
-//-------state
 bool isTeleStall = false;
 bool isAutoUp = false;
 bool isAutoDown = false;
@@ -99,19 +99,18 @@ bool isAutoDown = false;
 bool canTimeStamp = true;
 const long DECIDE_PEAK = 600; // 0.6 sec
 const long DECIDE_STOP = 500; // encoder step to decide it not going more than this
-long last_operation;
-long prev_count;
-long start_operation;
+long last_operation = millis();
+long prev_count = 0;
+long start_operation = millis();
 //-----------------
 
-bool lecateDelay = false; // use for is Auto Down
-long peakStall;
+long peakStall = 0;
 
 //saddwadaw
 bool isAutoAim = false;
 
 // GlobalDelay Call
-//allGlovalDelay.push( []() { /*function*/}; );
+//allGlovalDelay.push( );
 std::list<GlobalDelay> AllDelay;
 
 
@@ -126,18 +125,6 @@ MotorPIN Shooter( EV12 , free ,EV12pwm );
 #define E4inB 19
 #define E4pwm 17
 MotorPIN Lecate( E4inB , E4inA , E4pwm );
-
-
-//moveBaseOn
-bool onMoveExecute = false;
-
-//isfunctionActivate
-bool isFunctionActivate = false;
-
-
-
-
-
 
 
 
@@ -158,27 +145,6 @@ float y_ctrl = 0;
 float x_turn = 0;
 float y_turn = 0;
 
-/* ---------------- ENOCODERS INIT ---------------- */
-// Define pin numbers for encoder A and B channels
-// const int encoder1PinA = 32;
-// const int encoder1PinB = 33;
-
-// const int encoder2PinA = 25;
-// const int encoder2PinB = 26;
-
-// const int encoder3PinA = 14;
-// const int encoder3PinB = 27;
-
-// const int encoder4PinA = 12;
-// const int encoder4PinB = 13;
-
-// // Create an encoder object
-// ESP32Encoder encoder1;
-// ESP32Encoder encoder2;
-// ESP32Encoder encoder3;
-// ESP32Encoder encoder4;
-
-
 
 // Variables for rpm calculation
 long lastCount1 = 0;
@@ -193,11 +159,7 @@ int rpm4 = 0;
 long lastTime = 0;
 int ppr = 2048;
 
-// double Kp = 0.7, Ki = 5, Kd = 0;
-// PID_v2 PID_encoder1(Kp, Ki, Kd, PID::Direct);
-// PID_v2 PID_encoder2(Kp, Ki, Kd, PID::Direct);
-// PID_v2 PID_encoder3(Kp, Ki, Kd, PID::Direct);
-// PID_v2 PID_encoder4(Kp, Ki, Kd, PID::Direct);
+//------------------------------------ Instance PID shooter ------------------------------------//
 
 PID_v2 PID_camera_x(0.2, 0, 0, PID::Direct);
 
@@ -223,10 +185,6 @@ void setup() {
   resetEncoders();
 
 	Serial.setTimeout(1);
-
-  // pinMode(TelePinA, OUTPUT);
-  // pinMode(TelePinB, OUTPUT);
-  // pinMode(TelePWM, OUTPUT);
 
   PID_camera_x.Start(0, 0, 0);
   PID_camera_x.SetOutputLimits(-50, 50);
@@ -322,16 +280,5 @@ void loop() {
   //   }
   // }
 
-
-  // motor(6,-255); // motor 5 + backward - forward
-  // motor(5,-255);
-  // delay(200);
-  // motor(5,250);
-  // delay(4000);
-
-  // vTaskDelay(1);
-  // analogWrite(PWM, 255);
-  // digitalWrite(INA, HIGH);
-  // digitalWrite(INB, LOW);
 
 }
