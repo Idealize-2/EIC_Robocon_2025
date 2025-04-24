@@ -87,46 +87,64 @@ void processControllers() {
         Serial.println("Right");
       }
 
-      if( myController->dpad() == 1 ) 
+      if( myController->dpad() == 8 ) 
       {
           Serial.println("IN");
           Lecate.run( 180 );
       }
-      if( !myController->dpad() == 1 && butUpState )
+      if( !myController->dpad() == 8 && butLeftState )
       {
         Lecate.run( 0 );
+      }
+      butLeftState = myController->dpad() == 8;
+
+
+      if( myController->dpad() == 4 ) 
+      {
+          Serial.println("Out");
+          Lecate.run( -180 );
+      }
+      if( !myController->dpad() == 4 && butRightState  )
+      {
+         Lecate.run( 0 );
+      }
+      butRightState = myController->dpad() == 4;
+
+
+
+      if( myController->dpad() == 1 ) 
+      {
+        Tele.run( 255 );
+        Lecate.run( -180 );
+        Serial.println( teleEncoder.getCount() );
+      }
+      if( !myController->dpad() == 1 && butUpState)
+      {
+        Lecate.run( 0 );
+        peakStall = teleEncoder.getCount();
+        Tele.stop();
+        isTeleStall = true;
+        isAutoUp = false;
       }
       butUpState = myController->dpad() == 1;
 
 
       if( myController->dpad() == 2 ) 
       {
-          Serial.println("Out");
-          Lecate.run( -180 );
+        Tele.run( 90 );
+        Lecate.run( -180 );
+        Serial.println( teleEncoder.getCount() );
       }
-      if( !myController->dpad() == 2 && butDownState  )
+      if( !myController->dpad() == 2 && butDownState ) 
       {
-         Lecate.run( 0 );
+        Lecate.run( 0 );
+        peakStall = teleEncoder.getCount();
+        Tele.stop();
+        isTeleStall = true;
+        isAutoUp = false;
       }
       butDownState = myController->dpad() == 2;
 
-
-
-      if( myController->dpad() == 8 ) 
-      {
-          Serial.println("Left");
-          Grip7.run( 100 );
-          Grip8.run( -100 );
-          isKeep = false;
-
-      }
-      if( myController->dpad() == 4 ) 
-      {
-          Serial.println("Right");
-          Grip7.run( -120 );
-          Grip8.run( 120 );
-          isKeep = true;
-      }
       butUpState = myController->dpad() == 1;
       butDownState = myController->dpad() == 2;
       butLeftState = myController->dpad() == 8;
@@ -135,7 +153,7 @@ void processControllers() {
       //swap robot direction
       if (!myController->x() && XState) 
       {
-      
+        isKeep = !isKeep;
       }
       XState = myController->x();
 
@@ -153,20 +171,7 @@ void processControllers() {
 
       if( myController->b() && !BState )
       {
-          teleEncoder.setCount( 0 );
-          teleEncoder.setFilter( 10 ); 
-          // long start_operation = millis(); // idk why i put this but it cool 😎
-          last_operation = millis();
-          prev_count = teleEncoder.getCount(); //intialize prev_count   
-
-          //lecate.run(-50);
-          start_operation = millis();
-          lecateDelay = true;
-
-          Serial.println("Strart Teleing");
-          isAutoDown = false;
-          isAutoUp = true;
-          //TeleUp( 250 );
+          
       }
       BState = myController->b();
       //TeleAutoDown
@@ -261,6 +266,26 @@ void pressAutoDown()
     isAutoUp = false;
     isAutoDown = true;
   }
+}
+void pressAutoUp()
+{
+  if(!isOnTop)
+  {
+    teleEncoder.setCount( 0 );
+    teleEncoder.setFilter( 10 ); 
+    // long start_operation = millis(); // idk why i put this but it cool 😎
+    last_operation = millis();
+    prev_count = teleEncoder.getCount(); //intialize prev_count   
+
+    //lecate.run(-50);
+    start_operation = millis();
+
+    Serial.println("Strart Teleing");
+    isAutoDown = false;
+    isAutoUp = true;
+    //TeleUp( 250 );
+  }
+  
 }
 
 void shoot()

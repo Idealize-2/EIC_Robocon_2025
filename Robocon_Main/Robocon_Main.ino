@@ -62,6 +62,8 @@ bool shootON = false;
 
 bool lecateOn = false;
 
+bool isOnTop = false;
+
 
 /*---------Gripper---------*/
 #define Gripper_I2C_ADDRESS 0x56

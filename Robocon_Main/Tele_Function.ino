@@ -11,6 +11,7 @@ void TeleAutoDown( )
       peakStall = 0;
       Lecate.run( 0 );
       TeleStop();
+      isOnTop = false;
       Serial.println("----- End Auto Down -----");
     }
 }
@@ -37,7 +38,7 @@ void TeleAutoUp()
     }
     if ( millis() - last_operation > DECIDE_PEAK ) 
     {
-      Serial.println("END---------------------------------------------");
+      isOnTop = true;
       Lecate.run( 0 );
       peakStall = teleEncoder.getCount()-600;
       Tele.stop();
