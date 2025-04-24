@@ -252,7 +252,7 @@ void processControllers() {
             String input = Serial.readStringUntil('\n');
             x = input.toInt();
             BFver( x );
-            //Serial.println( x );
+            Serial.println( x );
           }
         } ,
         []() {Serial.println("End Auto Aim");}, 5000));
