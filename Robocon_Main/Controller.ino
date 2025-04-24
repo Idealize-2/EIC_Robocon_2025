@@ -140,6 +140,7 @@ void processControllers() {
       {
         Tele.run( 90 );
         Lecate.run( -180 );
+        isTeleStall = false;
         Serial.println( teleEncoder.getCount() );
       }
       if( !myController->dpad() == 2 && butDownState ) 
@@ -172,14 +173,14 @@ void processControllers() {
       }
       AState = myController->a();
 
-      if( myController->b() && !BState )
+      if( myController->y() && !YState )
       {
-          
+        pressAutoUp();   
       }
-      BState = myController->b();
+      YState = myController->y();
 
       //TeleAutoDown
-      if ( myController->y() && !YState ) {
+      if ( myController->b() && !BState ) {
         // motor(9, -185);
         // motor(10, -185);
         if( isFunctionActivate )
@@ -199,7 +200,7 @@ void processControllers() {
         }
 
       }
-      YState = myController->y();
+      BState = myController->b();
 
 //------------------------------------------------------------------- X A Y B -------------------------------------------------------------------//
 
