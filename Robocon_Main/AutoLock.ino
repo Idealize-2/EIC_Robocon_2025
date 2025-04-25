@@ -7,6 +7,11 @@ void BFver(int x) {
   //Serial.println( x );
   // int xmap = map(abs(x), 10, 640, 19, 40);
   int xmap = PID_camera_x.Run(x);
+  Serial.print( x );
+  Serial.print( "    " );
+
+  Serial.println(xmap);
+
   //  if(x > 5)
   //  {
   //    //Serial.print("////////////////////////////////Right/////////////////////////////////");
@@ -34,13 +39,13 @@ void BFver(int x) {
   //    motor3.run( -xmap );
   //    motor4.run( xmap );
   //  }
-  if (abs(x) > 5) {
+  if (abs(x) > 2) {
     motor1.run(-xmap);
     motor2.run(xmap);
     motor3.run(-xmap);
     motor4.run(xmap);
   } else {
-    //Serial.print("//////////////////////////////Center///////////////////////////////////");
+    Serial.print("//////////////////////////////Center///////////////////////////////////");
     isAutoAim = false;
     motor1.run(0);
     motor2.run(0);

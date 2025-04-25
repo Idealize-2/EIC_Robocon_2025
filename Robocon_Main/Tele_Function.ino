@@ -2,6 +2,8 @@
 
 void TeleAutoDown( )
 {
+  if(!stuckstate)
+  {
     if( teleEncoder.getCount() < 2000 )
     {
       //canLowerPeak = false;
@@ -9,17 +11,33 @@ void TeleAutoDown( )
       isAutoUp = false;
       isAutoDown = false;
       peakStall = 0;
-      Lecate.run( 0 );
+      Lecate.run( 0 );  
       TeleStop();
       isOnTop = false;
       Serial.println("----- End Auto Down -----");
     }
+    
+  }
+  else
+  {
+    Lecate.run( 0 );
+    peakStall = teleEncoder.getCount();
+    Tele.stop(); 
+    isTeleStall = true;  
+    isAutoUp = false;
+    isAutoDown = false;
+    stuckstate = false;
+    Serial.println(" Emergency Tele Stop");
+  }
+  
+    
+    
 }
 
 void TeleAutoUp()
 {
   Tele.run( 255 );
-  Lecate.run( -180 );
+  Lecate.run( -170 );
   Serial.println( teleEncoder.getCount() );
   if( teleEncoder.getCount() - prev_count > DECIDE_STOP )
   {
@@ -75,13 +93,13 @@ void TeleStall(  )
     if( ( millis() - last_operation ) > 100 )
     {
       long count_diff = prev_count - teleEncoder.getCount();
-      downPwm = map( count_diff , 0 , 2000 , 35 , 100);
+      downPwm = map( count_diff , 0 , 2000 , 10 , 80);
       //count_diff = teleEncoder.getCount();
       last_operation = millis();
       prev_count = teleEncoder.getCount();
     }
     Tele.run( downPwm );
-    Lecate.run( -180 );
+    Lecate.run( -170 );
     Serial.print( downPwm );
     Serial.println(" deceaseing ");
   }

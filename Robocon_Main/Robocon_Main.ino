@@ -40,6 +40,11 @@ bool L2State = false;
 bool R1State = false;
 bool R2State = false;
 
+bool R3State = false;
+bool L3State = false;
+
+
+
 bool miscSystemState = false;
 bool miscCenterState = false;
 bool miscBackState = false;
@@ -66,6 +71,7 @@ bool onMoveExecute = false;
 bool isFunctionActivate = false;
 //----------------------------------------------------------- other state -------------------------------------------------------------------//
 
+bool stuckstate = false;
 
 
 /*---------Gripper---------*/
@@ -88,6 +94,12 @@ MotorPIN Tele( TelePinA , TelePinB , TelePWM );
 #define Feeder_I2C_ADDRESS 0x51
 #define feederPin 0x85
 MotorI2C feeder( Feeder_I2C_ADDRESS , feederPin , true);
+
+//----------------
+#define WristAddress 0x51
+#define wristM10 0x86
+MotorI2C Wrist( WristAddress , wristM10 );
+
 
 
 //--------Tele Check etc. variable -----------//
@@ -161,7 +173,7 @@ int ppr = 2048;
 
 //------------------------------------ Instance PID shooter ------------------------------------//
 
-PID_v2 PID_camera_x(0.2, 0, 0, PID::Direct);
+PID_v2 PID_camera_x(0.18, 0.0000000001, 0, PID::Direct);
 
 float RPMToPWM(float rpm) {
   return abs(rpm / MAX_RPM * 255);
@@ -188,6 +200,20 @@ void setup() {
 
   PID_camera_x.Start(0, 0, 0);
   PID_camera_x.SetOutputLimits(-50, 50);
+  
+  AllDelay.push_back(GlobalDelay(
+    [](){
+      Grip7.run( -50 );
+      Grip8.run( 50 );
+      Wrist.run( 70 );
+    },
+    [](){
+      Grip7.run( 0 );
+      Grip8.run( 0 );
+      Wrist.run( 0 );
+    },
+    10000
+  ));
 
   //Serial.setTimeout(1);
 
@@ -199,6 +225,8 @@ void setup() {
   
 }
 
+bool start = false;
+
 void loop() {
   //while (!Serial.available());
 
@@ -207,7 +235,6 @@ void loop() {
   //calculateRPMs();
   bool dataUpdated = BP32.update();
   if (dataUpdated) {
-    //Serial.print("data updated");
     processControllers();
   }
 
@@ -249,7 +276,7 @@ void loop() {
   if( isAutoDown ) TeleAutoDown();
   if( isTeleStall )   TeleStall();
 
-  if( isKeep )
+  if( isKeep && start)
   {
     Grip7.run( -150 );
     Grip8.run( 150 );

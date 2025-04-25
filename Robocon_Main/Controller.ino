@@ -59,7 +59,21 @@ void processControllers() {
     // } 
     
     if (myController && myController->isConnected() && myController->hasData()) {
-
+      Serial.println(myController->isAnyKeyPressed());
+      if( !start && myController->isAnyKeyPressed()) 
+      {
+        Serial.println("---------------------------START---------------------------");
+        start = true;
+        AllDelay.push_back(GlobalDelay(
+          [](){
+            Wrist.run( -70 );
+          },
+          [](){
+            Wrist.run( 0 );
+          },
+          2000
+        ));
+      }
       //Serial.println("has data");
       if (myController->isGamepad()) {
         x_ctrl = mapf(myController->axisX(), -511, 512, -1, 1);
@@ -72,6 +86,7 @@ void processControllers() {
 
       if( myController->miscHome() ){
         Serial.println("LEft");
+        Wrist.run(100);
       }
       
       if( myController->miscCapture() && !miscCenterState ){
@@ -87,6 +102,7 @@ void processControllers() {
 
       if( myController->miscSelect() ){
         Serial.println("Right");
+        Wrist.run(-100);
       }
 
 //--------------------------------------------------------------- MISC BUTTON ----------------------------------------------------------------------//
@@ -94,28 +110,32 @@ void processControllers() {
 
 //------------------------------------------------------------------- D PAD --------------------------------------------------------------------//
 
-      if( myController->dpad() == 8 ) 
+      if( myController->dpad() == 8 && butLeftState  ) 
       {
           Serial.println("IN");
-          Lecate.run( 180 );
+          Lecate.run( -130 );
       }
-      if( !myController->dpad() == 8 && butLeftState )
+      if( myController->dpad() != 8 && butLeftState )
       {
         Lecate.run( 0 );
+        Serial.println(" in end");
       }
       butLeftState = myController->dpad() == 8;
+      
 
 
-      if( myController->dpad() == 4 ) 
+      if( myController->dpad() == 4 && butRightState) 
       {
           Serial.println("Out");
-          Lecate.run( -180 );
+          Lecate.run( 130 );
       }
-      if( !myController->dpad() == 4 && butRightState  )
+      if( myController->dpad() != 4 && butRightState  )
       {
          Lecate.run( 0 );
+         Serial.println(" in OUT");
       }
       butRightState = myController->dpad() == 4;
+  
 
 
 
@@ -125,7 +145,7 @@ void processControllers() {
         Lecate.run( -180 );
         Serial.println( teleEncoder.getCount() );
       }
-      if( !myController->dpad() == 1 && butUpState)
+      if( myController->dpad() != 1 && butUpState)
       {
         Lecate.run( 0 );
         peakStall = teleEncoder.getCount();
@@ -138,16 +158,16 @@ void processControllers() {
 
       if( myController->dpad() == 2 ) 
       {
-        Tele.run( 90 );
+        Tele.run( 70 );
         Lecate.run( -180 );
         isTeleStall = false;
         Serial.println( teleEncoder.getCount() );
       }
-      if( !myController->dpad() == 2 && butDownState ) 
+      if( myController->dpad() != 2 && butDownState ) 
       {
         Lecate.run( 0 );
         peakStall = teleEncoder.getCount();
-        Tele.stop();
+        Tele.stop(); 
         isTeleStall = true;
         isAutoUp = false;
       }
@@ -189,7 +209,7 @@ void processControllers() {
           AllDelay.push_back(
             GlobalDelay(
               []() {Lecate.run( -150 );},
-              []() {pressAutoDown();},
+              []() {pressAutoDown(); Lecate.run ( 0 ); },
               700
             )
           );
@@ -207,7 +227,7 @@ void processControllers() {
 //------------------------------------------------------------------- L1 L2 LTHUMP ------------------------------------------------------------------//
       if ( myController->l1() && !L1State )
       {
-        autoPoiBall();
+        shoot();
       }
       L1State = myController->l1();
 
@@ -215,7 +235,7 @@ void processControllers() {
       {
         shootON = !shootON;
         if( shootON ){
-          Shooter.run( 255 );
+          Shooter.run( 220 );
         }
         else
         {
@@ -236,7 +256,8 @@ void processControllers() {
       if ( myController->r1() && !R1State )
       {
         //feed ball to shooter
-        shoot();
+        autoPoiBall();
+        
       }
       R1State = myController->r1();
 
@@ -244,7 +265,7 @@ void processControllers() {
       if( myController->r2() && !R2State )
       {
         Serial.print("-------------------------------Hello-------------------------------");
-        
+        onMoveExecute = true;
         AllDelay.push_back( GlobalDelay([]() {
           if( Serial.available() )
           {
@@ -252,19 +273,21 @@ void processControllers() {
             String input = Serial.readStringUntil('\n');
             x = input.toInt();
             BFver( x );
-            Serial.println( x );
+
           }
         } ,
-        []() {Serial.println("End Auto Aim");}, 5000));
+        []() {Serial.println("End Auto Aim");onMoveExecute = false;}, 5000));
       }
       R2State = myController->r2();
 
-      if ( myController->thumbR() )
+      if ( myController->thumbR() && !R3State )
       {
+        stuckstate = true;
         Serial.println("r3 pressd");
       }
+      R3State = myController->thumbR();
 
- //------------------------------------------------------------------- R1 R2 R THUMP ------------------------------------------------------------------//
+ //------------------------------------------------------------------- R1 R2 R THUMP  ------------------------------------------------------------------//
     }
   }
 }
@@ -338,16 +361,17 @@ void autoPoiBall(){
         AllDelay.push_back(
             GlobalDelay(
               []() {
-                Lecate.run(150);
+                Lecate.run( 160 );
                 onMoveExecute = true;
-                motor1.run(50);
-                motor2.run(50);
-                motor3.run(50);
-                motor4.run(50);
+                motor1.run(60);
+                motor2.run(60);
+                motor3.run(60);
+                motor4.run(60);
               },
               []() {
                 isFunctionActivate = true;
                 onMoveExecute = false;
+                Lecate.run(80);
                 motor1.run(0);
                 motor2.run(0);
                 motor3.run(0);
@@ -357,7 +381,7 @@ void autoPoiBall(){
             )
         );
       },
-      1000
+      800
     )
   );
 }
